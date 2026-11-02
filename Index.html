@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel Escolar | Atividades e KPIs</title>
+<style>
+:root{--ink:#35445a;--muted:#78859a;--paper:#fffdf9;--bg:#f7f5f1;--line:#e7e5e0;--lav:#e9e4f7;--blue:#dceaf8;--mint:#dff1e8;--peach:#f9e6d8;--yellow:#fbf0c9;--rose:#f7dfdf;--purple:#8577ad;--green:#4e9478;--red:#bf6b6b;--gold:#ad8b42}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:"Trebuchet MS",Arial,sans-serif;color:var(--ink)}
+header{padding:28px clamp(18px,4vw,52px);background:#e9eff7;border-bottom:1px solid #dce4ef;position:relative;overflow:hidden}
+header:after{content:"✿";position:absolute;right:5%;top:-30px;font-size:150px;color:#cfdced;opacity:.7;transform:rotate(-15deg)}
+.eyebrow{text-transform:uppercase;letter-spacing:1.7px;font-size:11px;font-weight:bold;color:#7d8ba2}
+h1{font-size:clamp(25px,3vw,36px);margin:8px 0;color:#344862}header p{margin:0;max-width:820px;line-height:1.55;color:#63738a;font-size:14px;position:relative;z-index:1}
+main{max-width:1450px;margin:auto;padding:24px clamp(12px,3vw,38px) 40px}
+.toolbar{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-bottom:18px}
+button,.filelabel{border:1px solid transparent;border-radius:10px;padding:10px 13px;font-weight:bold;font-size:12px;cursor:pointer;font-family:inherit}
+.primary{background:#dce8f7;color:#435d80;border-color:#cad9ec}.secondary,.filelabel{background:#fffdf9;border-color:#e5e1d9;color:#59677a}.filelabel input{display:none}.danger{background:#f8e5e3;color:#995858}
+.note{font-size:11px;color:var(--muted);flex:1 1 230px}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-bottom:20px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:17px;box-shadow:0 4px 12px #49566a08}
+.card:nth-child(1){border-top:4px solid #b9cce5}.card:nth-child(2){border-top:4px solid #a9d4c0}.card:nth-child(3){border-top:4px solid #e9cf8e}.card:nth-child(4){border-top:4px solid #e4b9b9}
+.card-label{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:bold}.number{font-size:30px;font-weight:bold;margin:9px 0 3px;color:#394c64}.card-sub{font-size:11px;color:var(--muted)}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:19px;margin-bottom:18px;box-shadow:0 4px 12px #49566a07}
+.panel-title{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:15px}
+h2{font-size:18px;margin:0 0 5px;color:#3b4e66}.desc{font-size:12px;color:var(--muted);line-height:1.5}
+.formgrid{display:grid;grid-template-columns:2fr 1.2fr 1.2fr 1fr 1fr;gap:11px}
+.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:11px;font-weight:bold;color:#66748a}
+input,select,textarea{font-family:inherit;font-size:12px;color:var(--ink);padding:10px;border:1px solid #e0dfdc;border-radius:9px;background:#fff}
+textarea{resize:vertical;min-height:39px}.formrow2{display:grid;grid-template-columns:1.2fr 1.2fr 1fr 1.4fr auto;gap:11px;margin-top:11px;align-items:end}
+.board{display:grid;grid-template-columns:repeat(4,minmax(215px,1fr));gap:12px;overflow-x:auto;padding-bottom:4px}
+.lane{border-radius:13px;padding:12px;min-height:150px;background:#f4f4f2;border:1px solid #e8e6e1}
+.lane:nth-child(1){background:#f0f4fa}.lane:nth-child(2){background:#f2f0f9}.lane:nth-child(3){background:#fdf6e4}.lane:nth-child(4){background:#edf6f0}
+.lanehead{font-size:12px;font-weight:bold;display:flex;justify-content:space-between;align-items:center;margin-bottom:11px;color:#53647b}.count{background:#fff9;border-radius:20px;padding:4px 8px}
+.task{background:#fffdfb;border:1px solid #e5e3df;border-left:4px solid #b8cbe4;border-radius:10px;padding:11px;margin-bottom:9px}
+.task.status-andamento{border-left-color:#b9b0df}.task.status-pendente{border-left-color:#e6cb7c}.task.status-concluida{border-left-color:#a9d4c0}.task.status-atrasada{border-left-color:#e0aaaa}
+.taskname{font-weight:bold;font-size:12px;line-height:1.45;margin-bottom:7px}.meta{font-size:11px;color:#778398;line-height:1.7}.tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}.tag{font-size:10px;border-radius:20px;padding:4px 7px;background:#edf0f5;color:#5e6d82;font-weight:bold}.tag.red{background:#f8e4e2;color:#a75d5d}.tag.green{background:#e2f2e9;color:#4d8b70}.tag.yellow{background:#fbf0d0;color:#94752f}
+.taskbuttons{display:flex;gap:5px;margin-top:8px}.taskbuttons button{font-size:10px;padding:5px 7px;background:#f0efec;color:#657185;border:0}
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.filters input,.filters select{width:auto;min-width:150px}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:10px}table{border-collapse:collapse;width:100%;min-width:900px;font-size:11px}th,td{text-align:left;padding:11px 10px;border-bottom:1px solid #eeece7;vertical-align:top}th{background:#f4f3ef;color:#6e7a8c;text-transform:uppercase;letter-spacing:.4px;font-size:10px}tr:last-child td{border-bottom:0}
+.statuspill{display:inline-block;border-radius:20px;padding:4px 7px;font-size:10px;font-weight:bold}.p-pendente{background:#fbf0d0;color:#94752f}.p-andamento{background:#e9e4f7;color:#76669f}.p-concluida{background:#e2f2e9;color:#4d8b70}.p-atrasada{background:#f8e4e2;color:#a75d5d}
+.progress{height:7px;background:#eeece7;border-radius:10px;overflow:hidden;margin-top:8px}.progress span{display:block;height:100%;background:#a8cfbd;border-radius:10px}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.kpi{border:1px solid var(--line);border-radius:11px;padding:13px;background:#fffefa}.kpi strong{display:block;font-size:12px;margin-bottom:6px}.kpi p{font-size:11px;color:var(--muted);line-height:1.5;margin:0}
+.empty{text-align:center;color:var(--muted);font-size:12px;padding:22px}.footer{text-align:center;color:#9299a5;font-size:10px;padding:9px}
+@media(max-width:950px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.formgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.formrow2{grid-template-columns:repeat(2,minmax(0,1fr))}.kpis{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.formgrid,.formrow2,.kpis{grid-template-columns:1fr}.panel{padding:13px}.cards{gap:8px}.card{padding:12px}.number{font-size:25px}}
+
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 20px}.tabbtn{background:#fffdf9;border:1px solid #e4e1da;color:#65738a}.tabbtn.active{background:#e4eaf7;border-color:#c9d5e9;color:#425b7b}.tabview{display:none}.tabview.active{display:block}.twocol{display:grid;grid-template-columns:1fr 1fr;gap:14px}.milestones{display:grid;grid-template-columns:repeat(5,minmax(130px,1fr));gap:9px}.milestone{border:1px solid var(--line);border-radius:10px;padding:12px;background:#fffefa}.milestone strong{display:block;font-size:12px;margin-bottom:5px}.milestone .date{font-size:12px;color:#586c86;font-weight:bold}.milestone small{font-size:10px;color:var(--muted);line-height:1.4}.eventcard{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fffefa;margin-bottom:10px}.eventcard h3{font-size:14px;margin:0 0 8px}.notice-output{white-space:pre-wrap;background:#f7f6f2;border:1px dashed #d8d6ce;border-radius:11px;padding:16px;font-size:13px;line-height:1.65;min-height:140px}.inline-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.late-review{border-left:4px solid #e0aaaa;padding:12px;background:#fff9f7;border-radius:9px;margin-bottom:10px}.smallmuted{font-size:11px;color:var(--muted)}
+
+.post-maker{display:grid;grid-template-columns:minmax(260px,1fr) minmax(280px,360px);gap:22px;align-items:start}
+.post-preview-wrap{background:#f1efeb;border:1px solid #e5e1da;border-radius:14px;padding:14px;display:flex;justify-content:center}
+.insta-post{width:100%;max-width:330px;aspect-ratio:4/5;background:#e9e4f7;border-radius:8px;overflow:hidden;position:relative;display:flex;flex-direction:column;box-shadow:0 5px 18px #34445a18;color:#35445a}
+.theme-decor{position:absolute;z-index:3;top:8px;right:8px;left:8px;display:flex;justify-content:space-between;align-items:center;gap:5px;font-size:20px;pointer-events:none;text-shadow:0 1px 4px #ffffffb8}
+.theme-decor span{display:inline-block;filter:drop-shadow(0 1px 1px #ffffffaa)}
+.insta-post.theme-natal{background:#e6f0e7}.insta-post.theme-junina{background:#fff0c9}.insta-post.theme-criancas{background:#f9e1df}.insta-post.theme-volta{background:#e2eef9}.insta-post.theme-leitura{background:#e9e3f7}.insta-post.theme-familia{background:#f9e6d8}.insta-post.theme-reuniao{background:#e5f2e9}
+.insta-post.theme-natal .post-ribbon{background:#f7e5e2;color:#8b4d4d}.insta-post.theme-junina .post-ribbon{background:#f7d9a8;color:#795b2e}
+
+.post-photo{height:57%;position:relative;background:linear-gradient(135deg,#dceaf8,#f9e6d8);overflow:hidden;display:flex;align-items:center;justify-content:center}
+.post-photo img{width:100%;height:100%;object-fit:cover;display:none}.photo-placeholder{text-align:center;color:#71809a;padding:20px;font-size:13px;line-height:1.6}
+.post-ribbon{position:absolute;left:12px;top:12px;background:#fffdf0eF;padding:6px 9px;border-radius:30px;font-size:9px;letter-spacing:1px;text-transform:uppercase;font-weight:bold;z-index:1}
+.post-copy{flex:1;padding:16px 17px;display:flex;flex-direction:column;justify-content:center;background:var(--postbg,#e9e4f7)}.post-school{font-size:9px;text-transform:uppercase;letter-spacing:1.2px;font-weight:bold;opacity:.75;margin-bottom:8px}.post-title{font-size:25px;line-height:1.08;font-weight:900;overflow-wrap:anywhere}.post-detail{font-size:11px;line-height:1.5;margin-top:9px;white-space:pre-line}.post-footer{font-size:9px;font-weight:bold;margin-top:auto;padding-top:10px;letter-spacing:.3px}
+.post-fields{display:grid;grid-template-columns:1fr 1fr;gap:11px}.post-fields .wide{grid-column:1/-1}.post-controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+@media(max-width:800px){.post-maker{grid-template-columns:1fr}.post-preview-wrap{order:-1}.insta-post{max-width:300px}}
+
+@media(max-width:900px){.milestones{grid-template-columns:repeat(2,minmax(0,1fr))}.twocol{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+ <div class="eyebrow">Organização • acompanhamento • melhoria contínua</div>
+ <h1>🌷 Painel de Atividades da Escola</h1>
+ <p>Um espaço visual para acompanhar eventos, reuniões, campanhas, projetos e demandas da equipe escolar. Veja o que está em andamento, o que foi concluído e o que precisa de atenção por causa do prazo.</p>
+</header>
+<main>
+ <div class="toolbar">
+  <button class="primary" onclick="document.getElementById('atividade').focus()">＋ Cadastrar atividade</button>
+  <label class="filelabel">⇧ Importar planilha CSV <input id="csvFile" type="file" accept=".csv,text/csv"></label>
+  <button class="secondary" id="exportBtn">⇩ Exportar planilha CSV</button>
+  <button class="secondary" id="sampleBtn">Ver exemplo preenchido</button>
+  <button class="danger" id="clearBtn">Limpar atividades</button>
+  <span class="note">Dica: exporte o CSV para salvar ou compartilhar os dados com a equipe.</span>
+ </div>
+
+ <nav class="tabs" aria-label="Abas do painel">
+  <button class="tabbtn active" data-tab="dashboard">🏫 Painel de atividades</button>
+  <button class="tabbtn" data-tab="reviews">🔎 Análise de atrasos e melhorias</button>
+  <button class="tabbtn" data-tab="events">📅 Eventos e comunicados por turma</button>
+ </nav>
+ <div id="tab-dashboard" class="tabview active">
+ <section class="cards">
+  <div class="card"><div class="card-label">Total de atividades</div><div class="number" id="total">0</div><div class="card-sub">Demandas cadastradas</div></div>
+  <div class="card"><div class="card-label">Concluídas</div><div class="number" id="done">0%</div><div class="card-sub" id="doneSub">0 atividades finalizadas</div></div>
+  <div class="card"><div class="card-label">Em andamento</div><div class="number" id="progressNum">0</div><div class="card-sub">Atividades em execução</div></div>
+  <div class="card"><div class="card-label">Atrasadas</div><div class="number" id="late">0</div><div class="card-sub">Precisam de acompanhamento</div></div>
+ </section>
+
+ <section class="panel">
+  <div class="panel-title"><div><h2>✏️ Cadastro de atividade</h2><div class="desc">Inclua informações objetivas para que qualquer pessoa da equipe entenda o que precisa ser feito.</div></div></div>
+  <form id="taskForm">
+   <div class="formgrid">
+    <div class="field"><label for="atividade">Atividade / entrega *</label><input id="atividade" required placeholder="Ex.: Enviar comunicado às famílias"></div>
+    <div class="field"><label for="responsavel">Responsável *</label><input id="responsavel" required placeholder="Nome ou equipe"></div>
+    <div class="field"><label for="area">Área / projeto</label><select id="area"><option>Comunicação</option><option>Eventos</option><option>Pedagógico</option><option>Administrativo</option><option>Famílias e comunidade</option><option>Infraestrutura</option><option>Outro</option></select></div>
+    <div class="field"><label for="prazo">Prazo final *</label><input id="prazo" type="date" required></div>
+    <div class="field"><label for="status">Status</label><select id="status"><option value="Pendente">Pendente</option><option value="Em andamento">Em andamento</option><option value="Concluída">Concluída</option></select></div>
+   </div>
+   <div class="formrow2">
+    <div class="field"><label for="prioridade">Prioridade</label><select id="prioridade"><option>Normal</option><option>Alta</option><option>Urgente</option><option>Baixa</option></select></div>
+    <div class="field"><label for="inicio">Data de início</label><input id="inicio" type="date"></div>
+    <div class="field"><label for="progresso">Progresso (%)</label><input id="progresso" type="number" min="0" max="100" value="0"></div>
+    <div class="field"><label for="observacoes">Observações / próxima ação</label><input id="observacoes" placeholder="Ex.: Aguardar aprovação da direção"></div>
+    <button class="primary" type="submit">＋ Adicionar</button>
+   </div>
+   <div class="desc" style="margin-top:10px">* Campos obrigatórios. O status “Atrasada” é identificado automaticamente quando o prazo passou e a atividade ainda não foi concluída.</div>
+  </form>
+ </section>
+
+ <section class="panel">
+  <div class="panel-title"><div><h2>🗂️ Canvas visual de atividades</h2><div class="desc">As atividades são organizadas automaticamente por status. Use este quadro em reuniões de acompanhamento.</div></div>
+  <div class="filters"><input id="search" placeholder="Buscar atividade ou responsável…"><select id="filterArea"><option value="">Todas as áreas</option><option>Comunicação</option><option>Eventos</option><option>Pedagógico</option><option>Administrativo</option><option>Famílias e comunidade</option><option>Infraestrutura</option><option>Outro</option></select></div></div>
+  <div class="board">
+   <div class="lane"><div class="lanehead">📝 Pendente <span class="count" id="countPend">0</span></div><div id="lanePend"></div></div>
+   <div class="lane"><div class="lanehead">💜 Em andamento <span class="count" id="countProg">0</span></div><div id="laneProg"></div></div>
+   <div class="lane"><div class="lanehead">🌼 Atrasada <span class="count" id="countLate">0</span></div><div id="laneLate"></div></div>
+   <div class="lane"><div class="lanehead">🌱 Concluída <span class="count" id="countDone">0</span></div><div id="laneDone"></div></div>
+  </div>
+ </section>
+
+ <section class="panel">
+  <div class="panel-title"><div><h2>📋 Lista detalhada</h2><div class="desc">Filtre, revise e edite o status das atividades. A tabela pode ser exportada para abrir no Excel ou Google Planilhas.</div></div></div>
+  <div class="tablewrap"><table><thead><tr><th>Atividade</th><th>Responsável</th><th>Área</th><th>Prazo</th><th>Status</th><th>Prioridade</th><th>Progresso</th><th>Observações</th><th>Ações</th></tr></thead><tbody id="tbody"></tbody></table></div>
+ </section>
+
+ <section class="panel">
+  <div class="panel-title"><div><h2>📈 KPIs para acompanhamento escolar</h2><div class="desc">Indicadores sugeridos para avaliar se o painel está ajudando a equipe a cumprir os prazos e organizar as demandas.</div></div></div>
+  <div class="kpis">
+   <div class="kpi"><strong>1. Taxa de conclusão</strong><p>Fórmula: (atividades concluídas ÷ total de atividades) × 100. Acompanhar mensalmente e comparar com os períodos anteriores.</p></div>
+   <div class="kpi"><strong>2. Taxa de atividades atrasadas</strong><p>Fórmula: (atividades atrasadas ÷ total de atividades não concluídas) × 100. Ajuda a identificar gargalos e demandas que precisam de apoio.</p></div>
+   <div class="kpi"><strong>3. Cumprimento de prazos</strong><p>Fórmula: (atividades concluídas até o prazo ÷ atividades concluídas) × 100. Registre a data real de conclusão para medir com precisão.</p></div>
+   <div class="kpi"><strong>4. Atividades por responsável</strong><p>Quantidade de demandas abertas por pessoa ou equipe. Ajuda a visualizar a distribuição do trabalho e evitar sobrecarga.</p></div>
+   <div class="kpi"><strong>5. Tempo médio de conclusão</strong><p>Média de dias entre a data de início e a conclusão. Útil para estimar prazos futuros e melhorar o planejamento.</p></div>
+   <div class="kpi"><strong>6. Atualização do painel</strong><p>Percentual de atividades com responsável, prazo e status atualizados. Defina uma rotina semanal de revisão com a equipe.</p></div>
+  </div>
+ </section>
+ </div>
+ <div id="tab-reviews" class="tabview">
+  <section class="panel">
+   <div class="panel-title"><div><h2>🔎 Análise de atividades realizadas com atraso</h2><div class="desc">Registre o que aconteceu, o motivo do atraso, como a demanda foi resolvida e o que deve mudar para a próxima vez. As atividades atrasadas aparecem para seleção automaticamente.</div></div></div>
+   <form id="reviewForm">
+    <div class="formgrid" style="grid-template-columns:2fr 1fr 1fr 1fr 1fr">
+     <div class="field"><label for="reviewTask">Atividade atrasada *</label><select id="reviewTask" required><option value="">Selecione uma atividade</option></select></div>
+     <div class="field"><label for="reviewDate">Data da análise</label><input id="reviewDate" type="date" required></div>
+     <div class="field"><label for="reviewOwner">Responsável pela análise</label><input id="reviewOwner" placeholder="Nome/equipe"></div>
+     <div class="field"><label for="reviewCause">Motivo principal *</label><select id="reviewCause" required><option value="">Selecione</option><option>Prazo insuficiente</option><option>Falta de informação</option><option>Aprovação pendente</option><option>Acúmulo de demandas</option><option>Dependência de terceiros</option><option>Imprevisto/ausência</option><option>Falha de comunicação</option><option>Outro</option></select></div>
+     <div class="field"><label for="reviewImpact">Impacto</label><select id="reviewImpact"><option>Baixo</option><option>Médio</option><option>Alto</option></select></div>
+    </div>
+    <div class="twocol" style="margin-top:12px">
+     <div class="field"><label for="reviewDone">O que foi realizado para concluir? *</label><textarea id="reviewDone" required placeholder="Ex.: equipe redistribuiu as tarefas e o comunicado foi enviado no dia seguinte"></textarea></div>
+     <div class="field"><label for="reviewImprove">Como podemos melhorar nas próximas vezes? *</label><textarea id="reviewImprove" required placeholder="Ex.: iniciar a revisão do comunicado com uma semana de antecedência e definir substituto"></textarea></div>
+    </div>
+    <div class="formrow2" style="grid-template-columns:1fr 1fr 1fr auto"><div class="field"><label for="reviewAction">Ação preventiva definida</label><input id="reviewAction" placeholder="Ex.: criar lembrete no calendário"></div><div class="field"><label for="reviewDue">Prazo da ação preventiva</label><input id="reviewDue" type="date"></div><div class="field"><label for="reviewFollow">Quem acompanhará?</label><input id="reviewFollow" placeholder="Responsável pelo acompanhamento"></div><button class="primary" type="submit">Salvar análise</button></div>
+   </form>
+  </section>
+  <section class="panel"><div class="panel-title"><div><h2>📚 Histórico de aprendizados</h2><div class="desc">Use os registros para identificar causas recorrentes e ajustar o planejamento.</div></div><button class="secondary" id="exportReviews">Exportar análises CSV</button></div><div id="reviewsList"><div class="empty">Nenhuma análise registrada ainda.</div></div></section>
+ </div>
+ <div id="tab-events" class="tabview">
+  <section class="panel">
+   <div class="panel-title"><div><h2>📅 Planejamento de eventos e datas de divulgação</h2><div class="desc">Cadastre a data do evento. O painel calcula uma agenda de divulgação com início recomendado três meses antes, além de lembretes intermediários.</div></div></div>
+   <form id="eventForm">
+    <div class="formgrid">
+     <div class="field"><label for="eventName">Nome do evento *</label><input id="eventName" required placeholder="Ex.: Festa Junina da Escola"></div>
+     <div class="field"><label for="eventType">Tipo de evento</label><select id="eventType"><option>Festa escolar</option><option>Reunião de responsáveis</option><option>Apresentação cultural</option><option>Campanha</option><option>Feira / exposição</option><option>Passeio / atividade externa</option><option>Evento esportivo</option><option>Outro</option></select></div>
+     <div class="field"><label for="eventDate">Data do evento *</label><input id="eventDate" type="date" required></div>
+     <div class="field"><label for="eventOwner">Responsável pela organização *</label><input id="eventOwner" required placeholder="Nome/equipe"></div>
+     <div class="field"><label for="eventPlace">Local</label><input id="eventPlace" placeholder="Ex.: quadra da escola"></div>
+    </div>
+    <div class="formrow2" style="grid-template-columns:1fr 1fr 1fr 1.5fr auto">
+     <div class="field"><label for="eventClasses">Turma(s) / público *</label><input id="eventClasses" required placeholder="Ex.: 1ºA, 1ºB ou toda a escola"></div>
+     <div class="field"><label for="eventChannel">Canal do comunicado</label><select id="eventChannel"><option>WhatsApp da turma</option><option>Comunicado impresso</option><option>Instagram da escola</option><option>Agenda escolar</option><option>WhatsApp e impresso</option><option>Todos os canais</option></select></div>
+     <div class="field"><label for="eventDeadline">Prazo para confirmar presença</label><input id="eventDeadline" type="date"></div>
+     <div class="field"><label for="eventDetails">Informações importantes</label><input id="eventDetails" placeholder="Horário, traje, materiais, autorização…"></div>
+     <button class="primary" type="submit">＋ Adicionar evento</button>
+    </div>
+   </form>
+  </section>
+  <section class="panel"><div class="panel-title"><div><h2>🗓️ Calendário de divulgação recomendado</h2><div class="desc">Regra-base: começar a divulgação três meses antes. Para eventos menores, a escola pode ajustar os marcos conforme a necessidade.</div></div><button class="secondary" id="exportEvents">Exportar eventos CSV</button></div><div id="eventList"><div class="empty">Nenhum evento cadastrado.</div></div></section>
+  <section class="panel">
+   <div class="panel-title"><div><h2>💌 Criador de comunicados personalizados por turma</h2><div class="desc">Selecione um evento e gere um texto editável com as informações cadastradas. Revise antes de enviar, especialmente datas, horários e autorizações.</div></div></div>
+   <div class="formgrid" style="grid-template-columns:1.4fr 1fr 1fr 1fr 1fr">
+    <div class="field"><label for="noticeEvent">Evento</label><select id="noticeEvent"><option value="">Selecione um evento</option></select></div>
+    <div class="field"><label for="noticeClass">Turma / destinatários</label><input id="noticeClass" placeholder="Ex.: 2º ano B"></div>
+    <div class="field"><label for="noticeTone">Tom do comunicado</label><select id="noticeTone"><option value="acolhedor">Acolhedor e próximo</option><option value="formal">Formal e objetivo</option><option value="animado">Animado e convidativo</option></select></div>
+    <div class="field"><label for="noticeSender">Assinatura</label><input id="noticeSender" value="Equipe Escolar"></div>
+    <div class="field"><label for="noticePurpose">Objetivo</label><select id="noticePurpose"><option value="convite">Convite / divulgação</option><option value="lembrete">Lembrete</option><option value="confirmacao">Pedido de confirmação</option><option value="orientacoes">Orientações finais</option></select></div>
+   </div>
+   <div class="inline-actions"><button class="primary" id="generateNotice" type="button">✨ Gerar comunicado</button><button class="secondary" id="copyNotice" type="button">Copiar texto</button></div>
+   <div id="noticeOutput" class="notice-output" style="margin-top:12px">Selecione um evento e clique em “Gerar comunicado”. O texto aparecerá aqui para revisão e cópia.</div>
+  </section>
+  <section class="panel">
+   <div class="panel-title"><div><h2>🎨 Criar post visual para Instagram</h2><div class="desc">Monte um post quadrado vertical (proporção 4:5) com imagem, título e informações do evento. Você pode usar uma foto da escola ou uma imagem ilustrativa e baixar a arte em PNG.</div></div></div>
+   <div class="post-maker">
+    <div>
+     <div class="post-fields">
+      <div class="field wide"><label for="postTheme">Tema ilustrado do cartaz</label><select id="postTheme"><option value="natal">🎄 Natal</option><option value="junina">🌽 Festa Junina</option><option value="criancas">🎈 Dia das Crianças</option><option value="volta">✏️ Volta às aulas</option><option value="leitura">📚 Feira / projeto de leitura</option><option value="familia">💛 Festa da Família</option><option value="reuniao">🌷 Reunião de responsáveis</option><option value="livre">✨ Cartaz escolar decorativo</option></select><span class="smallmuted">Escolha um tema para aplicar elementos decorativos automaticamente no cartaz.</span></div>
+      <div class="field wide"><label for="postPhoto">Foto ou imagem do evento</label><input id="postPhoto" type="file" accept="image/*"><span class="smallmuted">Use uma imagem própria da escola, da atividade ou uma ilustração autorizada.</span></div>
+      <div class="field wide"><label for="postTitle">Título do post</label><input id="postTitle" placeholder="Ex.: Nossa Festa Junina está chegando!"></div>
+      <div class="field"><label for="postDate">Data</label><input id="postDate" placeholder="Ex.: 18 de junho"></div>
+      <div class="field"><label for="postPlace">Local / horário</label><input id="postPlace" placeholder="Ex.: Quadra • 14h"></div>
+      <div class="field"><label for="postAudience">Público / turma</label><input id="postAudience" placeholder="Ex.: Toda a comunidade escolar"></div>
+      <div class="field"><label for="postPalette">Paleta pastel</label><select id="postPalette"><option value="lav">Lilás suave</option><option value="blue">Azul céu</option><option value="mint">Verde menta</option><option value="peach">Pêssego</option><option value="yellow">Amarelo suave</option></select></div>
+      <div class="field wide"><label for="postMessage">Mensagem complementar</label><textarea id="postMessage" rows="3" placeholder="Ex.: Teremos brincadeiras, apresentações e muita diversão. Esperamos vocês!"></textarea></div>
+      <div class="field wide"><label for="postSignature">Assinatura / perfil</label><input id="postSignature" value="ESCOLA • COMUNIDADE • APRENDIZAGEM"></div>
+     </div>
+     <div class="post-controls"><button class="primary" type="button" id="fillPostFromEvent">Preencher com evento selecionado</button><button class="secondary" type="button" id="downloadPost">Baixar post em PNG</button><button class="primary" type="button" id="copyAIPrompt">✨ Preparar cartaz ilustrado com IA</button></div><p class="smallmuted">Este botão organiza os dados e copia um pedido pronto. Cole-o aqui no ChatGPT para eu criar uma arte ilustrada personalizada; o HTML sozinho não consegue chamar a IA automaticamente.</p>
+     <p class="smallmuted">Antes de publicar, confira a grafia, a data, o horário e as autorizações de uso de imagem dos estudantes.</p>
+    </div>
+    <div class="post-preview-wrap"><div class="insta-post" id="instaPost"><div class="theme-decor" id="themeDecor" aria-hidden="true">🎄 ✨ ❄️ ✨ 🎄</div><div class="post-photo" id="postPhotoArea"><span class="post-ribbon">Aviso escolar</span><img id="postImage" alt="Imagem do post"><div class="photo-placeholder" id="photoPlaceholder">📷<br>Adicione uma imagem<br>para visualizar seu post</div></div><div class="post-copy" id="postCopy"><div class="post-school">Comunicado especial</div><div class="post-title" id="postTitlePreview">Título do seu post</div><div class="post-detail" id="postDetailsPreview">Data e local do evento aparecerão aqui.</div><div class="post-footer" id="postSignaturePreview">ESCOLA • COMUNIDADE • APRENDIZAGEM</div></div></div></div>
+   </div>
+  </section>
+ </div>
+ <div class="footer">Painel demonstrativo para gestão escolar • Recomenda-se revisar as atividades semanalmente e planejar eventos com antecedência.</div>
+</main>
+<script>
+const tasks=[];
+let nextId=1;
+const $=id=>document.getElementById(id);
+const escapeHTML=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const today=()=>{const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)};
+function actualStatus(t){if(t.status!=='Concluída'&&t.prazo&&t.prazo<today())return 'Atrasada';return t.status}
+function fmtDate(s){if(!s)return '—';const [y,m,d]=s.split('-');return `${d}/${m}/${y}`}
+function statusClass(s){return s==='Atrasada'?'atrasada':s==='Concluída'?'concluida':s==='Em andamento'?'andamento':'pendente'}
+function statusPill(s){return `<span class="statuspill p-${statusClass(s)}">${escapeHTML(s)}</span>`}
+function filtered(){const q=$('search').value.toLowerCase().trim(),a=$('filterArea').value;return tasks.filter(t=>(!q||(t.atividade+' '+t.responsavel+' '+t.observacoes).toLowerCase().includes(q))&&(!a||t.area===a))}
+function card(t){const s=actualStatus(t),cl=statusClass(s),priority=t.prioridade==='Urgente'?'red':t.prioridade==='Alta'?'yellow':'',pct=s==='Concluída'?100:Number(t.progresso||0);return `<article class="task status-${cl}"><div class="taskname">${escapeHTML(t.atividade)}</div><div class="meta">👤 ${escapeHTML(t.responsavel)}<br>📅 Prazo: ${fmtDate(t.prazo)}<br>🏫 ${escapeHTML(t.area)}</div><div class="tags"><span class="tag ${s==='Atrasada'?'red':s==='Concluída'?'green':s==='Pendente'?'yellow':''}">${escapeHTML(s)}</span><span class="tag ${priority}">${escapeHTML(t.prioridade)}</span></div><div class="progress"><span style="width:${Math.max(0,Math.min(100,pct))}%"></span></div><div class="meta">${pct}% concluído${t.observacoes?'<br>↳ '+escapeHTML(t.observacoes):''}</div><div class="taskbuttons"><button onclick="cycleStatus(${t.id})">Alterar status</button><button onclick="editTask(${t.id})">Editar</button><button onclick="removeTask(${t.id})">Excluir</button></div></article>`}
+function render(){const visible=filtered();const groups={'Pendente':[],'Em andamento':[],'Atrasada':[],'Concluída':[]};visible.forEach(t=>groups[actualStatus(t)].push(t));const map=[['Pendente','lanePend','countPend'],['Em andamento','laneProg','countProg'],['Atrasada','laneLate','countLate'],['Concluída','laneDone','countDone']];map.forEach(([s,el,count])=>{$(el).innerHTML=groups[s].map(card).join('')||'<div class="empty">Nenhuma atividade</div>';$(count).textContent=groups[s].length});
+const total=tasks.length,done=tasks.filter(t=>actualStatus(t)==='Concluída').length,prog=tasks.filter(t=>actualStatus(t)==='Em andamento').length,late=tasks.filter(t=>actualStatus(t)==='Atrasada').length;
+$('total').textContent=total;$('done').textContent=(total?Math.round(done/total*100):0)+'%';$('doneSub').textContent=`${done} de ${total} atividades finalizadas`;$('progressNum').textContent=prog;$('late').textContent=late;
+$('tbody').innerHTML=visible.map(t=>{const s=actualStatus(t),pct=s==='Concluída'?100:Number(t.progresso||0);return `<tr><td><strong>${escapeHTML(t.atividade)}</strong></td><td>${escapeHTML(t.responsavel)}</td><td>${escapeHTML(t.area)}</td><td>${fmtDate(t.prazo)}</td><td>${statusPill(s)}</td><td>${escapeHTML(t.prioridade)}</td><td>${pct}%</td><td>${escapeHTML(t.observacoes||'—')}</td><td><button class="secondary" onclick="editTask(${t.id})">Editar</button> <button class="danger" onclick="removeTask(${t.id})">Excluir</button></td></tr>`}).join('')||'<tr><td colspan="9" class="empty">Nenhuma atividade encontrada. Cadastre uma ou importe um CSV.</td></tr>'}
+$('taskForm').addEventListener('submit',e=>{e.preventDefault();tasks.push({id:nextId++,atividade:$('atividade').value.trim(),responsavel:$('responsavel').value.trim(),area:$('area').value,prazo:$('prazo').value,status:$('status').value,prioridade:$('prioridade').value,inicio:$('inicio').value,progresso:Number($('progresso').value||0),observacoes:$('observacoes').value.trim()});e.target.reset();$('progresso').value=0;render()});
+function cycleStatus(id){const t=tasks.find(x=>x.id===id);if(!t)return;const options=['Pendente','Em andamento','Concluída'];t.status=options[(options.indexOf(t.status)+1)%options.length];if(t.status==='Concluída')t.progresso=100;render()}
+function editTask(id){const t=tasks.find(x=>x.id===id);if(!t)return;const v=prompt('Novo status: Pendente, Em andamento ou Concluída',t.status);if(v===null)return;const match=['Pendente','Em andamento','Concluída'].find(x=>x.toLowerCase()===v.trim().toLowerCase());if(!match){alert('Status inválido. Use Pendente, Em andamento ou Concluída.');return}t.status=match;if(match==='Concluída')t.progresso=100;else{const p=prompt('Progresso de 0 a 100:',String(t.progresso||0));if(p!==null&&p.trim()!==''&&!isNaN(Number(p)))t.progresso=Math.max(0,Math.min(100,Number(p)))}render()}
+function removeTask(id){if(confirm('Excluir esta atividade?')){const i=tasks.findIndex(t=>t.id===id);if(i>=0)tasks.splice(i,1);render()}}
+$('search').addEventListener('input',render);$('filterArea').addEventListener('change',render);
+function csvEscape(v){return '"'+String(v??'').replace(/"/g,'""')+'"'}
+const headers=['Atividade','Responsável','Área','Prazo','Status','Prioridade','Data de início','Progresso','Observações'];
+function toCSV(rows){return '\ufeff'+[headers,...rows.map(t=>[t.atividade,t.responsavel,t.area,t.prazo,t.status,t.prioridade,t.inicio,t.progresso,t.observacoes])].map(r=>r.map(csvEscape).join(';')).join('\r\n')}
+$('exportBtn').addEventListener('click',()=>{const blob=new Blob([toCSV(tasks)],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='painel_atividades_escolares.csv';a.click();URL.revokeObjectURL(url)});
+function parseCSV(text){const first=text.split(/\r?\n/,1)[0];const sep=(first.match(/;/g)||[]).length>(first.match(/,/g)||[]).length?';':',';const rows=[];let row=[],cell='',quoted=false;for(let i=0;i<text.length;i++){const c=text[i];if(c==='"'&&quoted&&text[i+1]==='"'){cell+='"';i++}else if(c==='"'){quoted=!quoted}else if(c===sep&&!quoted){row.push(cell);cell=''}else if((c==='\n'||c==='\r')&&!quoted){if(c==='\r'&&text[i+1]==='\n')i++;row.push(cell);if(row.some(x=>x.trim()))rows.push(row);row=[];cell=''}else cell+=c}row.push(cell);if(row.some(x=>x.trim()))rows.push(row);return rows}
+$('csvFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{const rows=parseCSV((await file.text()).replace(/^\ufeff/,''));if(rows.length<2)throw Error('A planilha não contém linhas de atividades.');const norm=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();const h=rows[0].map(norm);const find=(...names)=>{for(const n of names){const i=h.indexOf(norm(n));if(i>=0)return i}return -1};const ix={atividade:find('Atividade','Atividade / entrega','Tarefa'),responsavel:find('Responsável','Responsavel'),area:find('Área','Area','Área / projeto'),prazo:find('Prazo','Prazo final'),status:find('Status'),prioridade:find('Prioridade'),inicio:find('Data de início','Data de inicio'),progresso:find('Progresso','Progresso (%)'),observacoes:find('Observações','Observacoes','Observações / próxima ação')};if(ix.atividade<0||ix.responsavel<0||ix.prazo<0)throw Error('A planilha precisa ter pelo menos as colunas Atividade, Responsável e Prazo. Use o modelo exportado pelo painel como referência.');let count=0;rows.slice(1).forEach(r=>{const get=k=>ix[k]>=0?(r[ix[k]]||'').trim():'';if(!get('atividade'))return;let st=get('status');const valid=['Pendente','Em andamento','Concluída'];if(!valid.some(x=>x.toLowerCase()===st.toLowerCase()))st='Pendente';else st=valid.find(x=>x.toLowerCase()===st.toLowerCase());let prazo=get('prazo');if(/^\d{2}\/\d{2}\/\d{4}$/.test(prazo)){const [d,m,y]=prazo.split('/');prazo=`${y}-${m}-${d}`}tasks.push({id:nextId++,atividade:get('atividade'),responsavel:get('responsavel')||'Não definido',area:get('area')||'Outro',prazo,status:st,prioridade:get('prioridade')||'Normal',inicio:get('inicio'),progresso:Math.max(0,Math.min(100,Number(get('progresso').replace('%',''))||0)),observacoes:get('observacoes')});count++});render();alert(`${count} atividade(s) importada(s). Confira os prazos e status.`)}catch(err){alert('Não foi possível importar: '+err.message)}e.target.value=''});
+$('sampleBtn').addEventListener('click',()=>{if(tasks.length&&!confirm('Adicionar exemplos às atividades atuais?'))return;const d=(n)=>{const x=new Date();x.setDate(x.getDate()+n);return new Date(x.getTime()-x.getTimezoneOffset()*60000).toISOString().slice(0,10)};[{atividade:'Enviar comunicado da reunião de responsáveis',responsavel:'Coordenação',area:'Comunicação',prazo:d(3),status:'Em andamento',prioridade:'Alta',inicio:d(-1),progresso:60,observacoes:'Revisar texto antes do envio'},{atividade:'Organizar calendário de eventos do mês',responsavel:'Secretaria escolar',area:'Eventos',prazo:d(-2),status:'Em andamento',prioridade:'Urgente',inicio:d(-7),progresso:40,observacoes:'Falta confirmar duas datas'},{atividade:'Atualizar mural de avisos',responsavel:'Equipe administrativa',area:'Administrativo',prazo:d(5),status:'Pendente',prioridade:'Normal',inicio:'',progresso:0,observacoes:'Separar comunicados por turma'},{atividade:'Realizar campanha de leitura',responsavel:'Equipe pedagógica',area:'Pedagógico',prazo:d(-4),status:'Concluída',prioridade:'Normal',inicio:d(-12),progresso:100,observacoes:'Registrar participação dos estudantes'},{atividade:'Confirmar materiais para feira escolar',responsavel:'Comissão de eventos',area:'Eventos',prazo:d(1),status:'Em andamento',prioridade:'Alta',inicio:d(-3),progresso:75,observacoes:'Aguardar retorno de fornecedor'}].forEach(t=>tasks.push({...t,id:nextId++}));render()});
+$('clearBtn').addEventListener('click',()=>{if(confirm('Remover todas as atividades deste painel? Exporte o CSV antes, se precisar guardar os dados.')){tasks.splice(0,tasks.length);render()}});
+
+const reviews=[];const events=[];
+function activateTab(name){document.querySelectorAll('.tabbtn').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));document.querySelectorAll('.tabview').forEach(v=>v.classList.toggle('active',v.id==='tab-'+name));}
+document.querySelectorAll('.tabbtn').forEach(b=>b.addEventListener('click',()=>activateTab(b.dataset.tab)));
+function refreshReviewOptions(){const sel=$('reviewTask'),old=sel.value;sel.innerHTML='<option value="">Selecione uma atividade</option>';tasks.filter(t=>actualStatus(t)==='Atrasada'||t.status==='Concluída').forEach(t=>{const o=document.createElement('option');o.value=t.id;o.textContent=t.atividade+' — '+actualStatus(t);sel.appendChild(o)});if(old)sel.value=old}
+function renderReviews(){const box=$('reviewsList');if(!reviews.length){box.innerHTML='<div class="empty">Nenhuma análise registrada ainda.</div>';return}box.innerHTML=reviews.slice().reverse().map(r=>`<article class="late-review"><strong>${escapeHTML(r.activity)}</strong><div class="smallmuted">Análise: ${fmtDate(r.date)} · Motivo: ${escapeHTML(r.cause)} · Impacto: ${escapeHTML(r.impact)} · Responsável: ${escapeHTML(r.owner||'Não informado')}</div><p><b>O que foi feito:</b> ${escapeHTML(r.done)}</p><p><b>Como melhorar:</b> ${escapeHTML(r.improve)}</p><p><b>Ação preventiva:</b> ${escapeHTML(r.action||'Não definida')} ${r.due?'— prazo '+fmtDate(r.due):''} ${r.follow?'— acompanhamento: '+escapeHTML(r.follow):''}</p></article>`).join('')}
+$('reviewDate').value=today();$('reviewForm').addEventListener('submit',e=>{e.preventDefault();const task=tasks.find(t=>t.id===Number($('reviewTask').value));if(!task){alert('Selecione uma atividade.');return}reviews.push({activity:task.atividade,date:$('reviewDate').value,owner:$('reviewOwner').value.trim(),cause:$('reviewCause').value,impact:$('reviewImpact').value,done:$('reviewDone').value.trim(),improve:$('reviewImprove').value.trim(),action:$('reviewAction').value.trim(),due:$('reviewDue').value,follow:$('reviewFollow').value.trim()});task.status='Concluída';task.progresso=100;render();refreshReviewOptions();renderReviews();e.target.reset();$('reviewDate').value=today();alert('Análise salva. A atividade foi marcada como concluída; o histórico de atraso foi mantido.')});
+function csvDownload(name,headers,rows){const esc=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const data='\ufeff'+[headers,...rows].map(r=>r.map(esc).join(';')).join('\r\n');const blob=new Blob([data],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();URL.revokeObjectURL(url)}
+$('exportReviews').addEventListener('click',()=>csvDownload('analises_de_atrasos.csv',['Atividade','Data da análise','Responsável análise','Motivo','Impacto','O que foi realizado','Melhoria futura','Ação preventiva','Prazo ação','Acompanhamento'],reviews.map(r=>[r.activity,r.date,r.owner,r.cause,r.impact,r.done,r.improve,r.action,r.due,r.follow])));
+function addMonths(dateString,months){const d=new Date(dateString+'T12:00:00');const day=d.getDate();d.setMonth(d.getMonth()+months);if(d.getDate()<day)d.setDate(0);return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)}
+function eventMilestones(ev){return [{label:'Iniciar divulgação',offset:-3,desc:'Anúncio inicial, save the date e comunicação às famílias.'},{label:'Reforço 2 meses antes',offset:-2,desc:'Divulgar detalhes, programação e orientações iniciais.'},{label:'Reforço 1 mês antes',offset:-1,desc:'Reforçar convite e confirmar necessidades de organização.'},{label:'Lembrete 2 semanas antes',offset:0,desc:'Enviar lembrete; data sugerida calculada a partir de 14 dias antes.'},{label:'Lembrete final',offset:0,desc:'Reforçar informações na semana do evento.'}].map((m,i)=>{let date;if(i===3||i===4){const d=new Date(ev.date+'T12:00:00');d.setDate(d.getDate()-(i===3?14:7));date=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)}else date=addMonths(ev.date,m.offset);return {...m,date}})}
+function renderEvents(){const box=$('eventList');if(!events.length){box.innerHTML='<div class="empty">Nenhum evento cadastrado.</div>';$('noticeEvent').innerHTML='<option value="">Selecione um evento</option>';return}box.innerHTML=events.map(ev=>{const ms=eventMilestones(ev);return `<article class="eventcard"><h3>🎈 ${escapeHTML(ev.name)}</h3><div class="meta">${escapeHTML(ev.type)} · 📅 Evento: <b>${fmtDate(ev.date)}</b> · 👤 ${escapeHTML(ev.owner)} · 🏫 Público: ${escapeHTML(ev.classes)} · 📍 ${escapeHTML(ev.place||'Local a confirmar')}</div><div class="smallmuted" style="margin:8px 0">Canal: ${escapeHTML(ev.channel)}${ev.deadline?' · Confirmar presença até '+fmtDate(ev.deadline):''}${ev.details?' · '+escapeHTML(ev.details):''}</div><div class="milestones">${ms.map((m,i)=>`<div class="milestone"><strong>${escapeHTML(m.label)}</strong><div class="date">${fmtDate(m.date)}</div><small>${escapeHTML(m.desc)}</small></div>`).join('')}</div><div class="inline-actions"><button class="secondary" onclick="selectEventForNotice(${ev.id})">Criar comunicado</button><button class="danger" onclick="deleteEvent(${ev.id})">Excluir evento</button></div></article>`}).join('');const sel=$('noticeEvent'),old=sel.value;sel.innerHTML='<option value="">Selecione um evento</option>'+events.map(ev=>`<option value="${ev.id}">${escapeHTML(ev.name)} — ${fmtDate(ev.date)}</option>`).join('');if(old)sel.value=old}
+$('eventForm').addEventListener('submit',e=>{e.preventDefault();events.push({id:Date.now()+Math.floor(Math.random()*1000),name:$('eventName').value.trim(),type:$('eventType').value,date:$('eventDate').value,owner:$('eventOwner').value.trim(),place:$('eventPlace').value.trim(),classes:$('eventClasses').value.trim(),channel:$('eventChannel').value,deadline:$('eventDeadline').value,details:$('eventDetails').value.trim()});renderEvents();e.target.reset();alert('Evento cadastrado e calendário de divulgação calculado.')});
+window.selectEventForNotice=id=>{$('noticeEvent').value=String(id);const ev=events.find(x=>x.id===id);if(ev)$('noticeClass').value=ev.classes;$('noticeOutput').textContent='Evento selecionado. Clique em “Gerar comunicado” para montar o texto.'};window.deleteEvent=id=>{if(confirm('Excluir este evento do calendário?')){const i=events.findIndex(e=>e.id===id);if(i>=0)events.splice(i,1);renderEvents()}};
+$('exportEvents').addEventListener('click',()=>csvDownload('calendario_eventos_escolares.csv',['Evento','Tipo','Data do evento','Responsável','Local','Turmas/público','Canal','Prazo confirmação','Informações'],events.map(e=>[e.name,e.type,e.date,e.owner,e.place,e.classes,e.channel,e.deadline,e.details])));
+$('generateNotice').addEventListener('click',()=>{const ev=events.find(x=>x.id===Number($('noticeEvent').value));if(!ev){alert('Cadastre ou selecione um evento primeiro.');return}const turma=$('noticeClass').value.trim()||ev.classes,tone=$('noticeTone').value,purpose=$('noticePurpose').value,sender=$('noticeSender').value.trim()||'Equipe Escolar';const greeting=tone==='formal'?'Prezadas famílias':tone==='animado'?'Olá, famílias!':'Queridas famílias';let opening=purpose==='lembrete'?'Passando para lembrar que':purpose==='confirmacao'?'Pedimos, por gentileza, que confirmem a participação em':purpose==='orientacoes'?'Compartilhamos as orientações finais para':'Temos o prazer de convidar vocês para';let body=`${greeting} da turma ${turma},\n\n${opening} o evento “${ev.name}”, do tipo ${ev.type.toLowerCase()}.\n\n📅 Data: ${fmtDate(ev.date)}\n📍 Local: ${ev.place||'a confirmar pela escola'}\n👥 Público: ${turma}\n${ev.details?'ℹ️ Informações importantes: '+ev.details+'\n':''}${ev.deadline?'✅ Pedimos que confirmem até: '+fmtDate(ev.deadline)+'\n':''}\n${purpose==='confirmacao'?'Por favor, respondam a esta mensagem informando se o(a) estudante participará.':purpose==='orientacoes'?'Pedimos que leiam as informações com atenção e entrem em contato com a escola caso tenham dúvidas.':'Contamos com a participação de vocês! Em caso de dúvidas, procurem a equipe escolar.'}\n\nAtenciosamente,\n${sender}`;if(tone==='animado')body=body.replace('Contamos com a participação de vocês!','Vai ser um momento muito especial — esperamos vocês! 🎉');$('noticeOutput').textContent=body});
+
+// Pré-visualização de post para Instagram e exportação como imagem PNG.
+let postImageData=null;
+const paletteMap={lav:'#e9e4f7',blue:'#dceaf8',mint:'#dff1e8',peach:'#f9e6d8',yellow:'#fbf0c9'};
+const themeMap={natal:{icons:['🎄','✨','❄️','✨','🎁'],bg:'#e6f0e7'},junina:{icons:['🌽','🎉','🏮','🎊','🌻'],bg:'#fff0c9'},criancas:{icons:['🎈','⭐','🧸','🎨','🎈'],bg:'#f9e1df'},volta:{icons:['✏️','📚','⭐','🖍️','✏️'],bg:'#e2eef9'},leitura:{icons:['📚','✨','📖','⭐','📚'],bg:'#e9e3f7'},familia:{icons:['💛','🌼','🏡','💛','🌼'],bg:'#f9e6d8'},reuniao:{icons:['🌷','📝','💬','🌷','✨'],bg:'#e5f2e9'},livre:{icons:['✨','🌷','⭐','🌷','✨'],bg:'#e9e4f7'}};
+function updatePostPreview(){const title=$('postTitle').value.trim()||'Título do seu post';const date=$('postDate').value.trim();const place=$('postPlace').value.trim();const audience=$('postAudience').value.trim();const message=$('postMessage').value.trim();$('postTitlePreview').textContent=title;$('postDetailsPreview').textContent=[date,place,audience,message].filter(Boolean).join(' · ')||'Data e local do evento aparecerão aqui.';$('postSignaturePreview').textContent=$('postSignature').value.trim()||'ESCOLA • COMUNIDADE • APRENDIZAGEM';const theme=$('postTheme')?.value||'livre';const config=themeMap[theme]||themeMap.livre;$('instaPost').className='insta-post theme-'+theme;$('themeDecor').innerHTML=config.icons.map(x=>'<span>'+x+'</span>').join('');$('postCopy').style.setProperty('--postbg',config.bg);$('postCopy').style.background=config.bg;}
+['postTitle','postDate','postPlace','postAudience','postPalette','postMessage','postSignature'].forEach(id=>$(id).addEventListener('input',updatePostPreview));$('postTheme').addEventListener('change',updatePostPreview);
+$('postPhoto').addEventListener('change',e=>{const file=e.target.files[0];if(!file)return;if(!file.type.startsWith('image/')){alert('Escolha um arquivo de imagem.');return}const reader=new FileReader();reader.onload=()=>{postImageData=reader.result;$('postImage').src=postImageData;$('postImage').style.display='block';$('photoPlaceholder').style.display='none'};reader.readAsDataURL(file)});
+$('copyAIPrompt').addEventListener('click',async()=>{const themeNames={natal:'Natal',junina:'Festa Junina',criancas:'Dia das Crianças',volta:'Volta às aulas',leitura:'Feira ou projeto de leitura',familia:'Festa da Família',reuniao:'Reunião de responsáveis',livre:'cartaz escolar decorativo'};const details=[['Evento',$('postTitle').value],['Data',$('postDate').value],['Local e horário',$('postPlace').value],['Público/turma',$('postAudience').value],['Mensagem',$('postMessage').value],['Assinatura da escola',$('postSignature').value]].map(([k,v])=>k+': '+(v.trim()||'não informado')).join('\n');const prompt='Crie um cartaz escolar ilustrado para Instagram, proporção vertical 4:5, com aparência profissional, delicada e criativa, elementos desenhados à mão e detalhes decorativos relacionados ao tema '+(themeNames[$('postTheme').value]||'escolar')+'. Use as informações abaixo exatamente como escritas, sem inventar datas, horários, endereço ou nome da escola. Organize o texto com boa legibilidade, hierarquia visual e composição bonita.\n\n'+details+'\n\nSe faltar informação, não invente; omita ou deixe espaço reservado. Revise cuidadosamente a ortografia em português.';try{await navigator.clipboard.writeText(prompt);alert('Pedido copiado! Volte à conversa do ChatGPT, cole o texto e envie. Eu criarei o cartaz com esses dados.')}catch(err){const box=document.createElement('textarea');box.value=prompt;box.style.position='fixed';box.style.opacity='0';document.body.appendChild(box);box.select();const ok=document.execCommand('copy');box.remove();if(ok)alert('Pedido copiado! Cole-o aqui na conversa do ChatGPT para eu criar o cartaz.');else promptForUser(prompt)}});function promptForUser(prompt){window.prompt('Copie este pedido e cole na conversa do ChatGPT:',prompt)}
+$('fillPostFromEvent').addEventListener('click',()=>{const ev=events.find(x=>x.id===Number($('noticeEvent').value));if(!ev){alert('Selecione um evento na seção de criação de comunicado primeiro.');return}$('postTitle').value=ev.name;$('postDate').value=fmtDate(ev.date);$('postPlace').value=[ev.place,ev.details].filter(Boolean).join(' • ');$('postAudience').value=ev.classes;$('postMessage').value=`Esperamos vocês! Compartilhe este aviso com as famílias da turma ${ev.classes}.`;$('postSignature').value='EQUIPE ESCOLAR';updatePostPreview()});
+$('downloadPost').addEventListener('click',()=>{const canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1350;const ctx=canvas.getContext('2d');const theme=$('postTheme')?.value||'livre';const themeCfg=themeMap[theme]||themeMap.livre;const bg=themeCfg.bg||paletteMap[$('postPalette').value]||paletteMap.lav;const drawText=(text,x,y,maxWidth,lineHeight,font,color,weight='normal')=>{ctx.font=`${weight} ${font}`;ctx.fillStyle=color;const words=String(text||'').split(/\s+/);let line='',yy=y;for(const word of words){const test=line?line+' '+word:word;if(ctx.measureText(test).width>maxWidth&&line){ctx.fillText(line,x,yy);line=word;yy+=lineHeight}else line=test}if(line)ctx.fillText(line,x,yy);return yy};const finish=()=>{ctx.fillStyle=bg;ctx.fillRect(0,760,1080,590);ctx.font='44px Arial';ctx.textAlign='left';const deco=themeCfg.icons||['✨','🌷','⭐','🌷','✨'];deco.forEach((symbol,i)=>ctx.fillText(symbol,45+i*205,805));ctx.fillStyle='#586a82';ctx.font='bold 27px Arial';ctx.fillText('COMUNICADO ESPECIAL',70,820);let y=drawText($('postTitle').value.trim()||'Título do seu post',70,895,940,68,'bold 56px Arial','#35445a');const details=[$('postDate').value.trim(),$('postPlace').value.trim(),$('postAudience').value.trim()].filter(Boolean).join('  •  ');y=drawText(details,70,y+60,930,38,'24px Arial','#43566d');const msg=$('postMessage').value.trim();if(msg)y=drawText(msg,70,y+45,930,36,'25px Arial','#43566d');ctx.fillStyle='#35445a';ctx.font='bold 21px Arial';ctx.fillText(($('postSignature').value.trim()||'EQUIPE ESCOLAR').toUpperCase().slice(0,70),70,1290);canvas.toBlob(blob=>{if(!blob){alert('Não foi possível criar a imagem.');return}const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='post_escolar_instagram.png';a.click();URL.revokeObjectURL(url)},'image/png')};ctx.fillStyle=bg;ctx.fillRect(0,0,1080,1350);if(postImageData){const img=new Image();img.onload=()=>{const targetH=760,scale=Math.max(1080/img.width,targetH/img.height),w=img.width*scale,h=img.height*scale;ctx.save();ctx.beginPath();ctx.rect(0,0,1080,targetH);ctx.clip();ctx.drawImage(img,(1080-w)/2,(targetH-h)/2,w,h);ctx.restore();finish()};img.onerror=()=>{finish()};img.src=postImageData}else{ctx.fillStyle='#dceaf8';ctx.fillRect(0,0,1080,760);ctx.fillStyle='#71809a';ctx.font='bold 48px Arial';ctx.textAlign='center';ctx.fillText('COMUNICADO ESCOLAR',540,350);ctx.font='32px Arial';ctx.fillText('Adicione uma foto para personalizar',540,410);ctx.textAlign='left';finish()}});
+updatePostPreview();
+
+$('copyNotice').addEventListener('click',async()=>{const text=$('noticeOutput').textContent;if(!text||text.startsWith('Selecione um evento')){alert('Gere um comunicado antes de copiar.');return}try{await navigator.clipboard.writeText(text);alert('Comunicado copiado!')}catch(e){const range=document.createRange();range.selectNodeContents($('noticeOutput'));const sel=window.getSelection();sel.removeAllRanges();sel.addRange(range);alert('Selecione o texto destacado e copie com Ctrl+C.')}});
+// Wrap render so the review selector remains synchronized with task updates.
+const baseRender=render;render=function(){baseRender();refreshReviewOptions()};
+render();renderReviews();renderEvents();
+</script>
+</body>
+</html>
